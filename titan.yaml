@@ -1,0 +1,971 @@
+game_config:
+  title: "Projekt TITAN: Cyberatak na Infrastrukturę Krytyczną"
+  time_limit_sec: 180
+  branding:
+    logo_url: "https://cdn-icons-png.flaticon.com/512/2933/2933116.png"
+    primary_color: "#eab308"
+    background_color: "#0f172a"
+    panel_bg_color: "#1e293b"
+    text_color: "#f8fafc"
+  metrics:
+    - id: "siec_ot"
+      label: "STABILNOŚĆ SIECI ENERGETYCZNEJ"
+      color: "#f59e0b"
+    - id: "finanse"
+      label: "PŁYNNOŚĆ FINANSOWA"
+      color: "#10b981"
+    - id: "prawo"
+      label: "ZGODNOŚĆ Z REGULATORAMI"
+      color: "#8b5cf6"
+    - id: "zaufanie"
+      label: "ZAUFANIE PUBLICZNE"
+      color: "#3b82f6"
+
+  gamification:
+    stock_weights:
+      siec_ot: 0.4
+      zaufanie: 0.3
+      finanse: 0.2
+      prawo: 0.1
+    roles:
+      liquidity: finanse
+      security: siec_ot
+      reputation: zaufanie
+    osint_cost: 12
+    osint_cost_metric: finanse
+
+  global_pass_threshold:
+    min_stock_price: 45.0
+
+scenarios:
+  - id: "s1_infekcja"
+    name: "AKT I: Cichy intruz w sieci IT"
+    rounds:
+      1:
+        title: "S1.R1: Podejrzany ruch z serwerów pocztowych"
+        desc: "Piątek, 16:00. System SIEM generuje serię alertów o dziwnym ruchu wychodzącym z komputerów w dziale kadr. Ktoś pobiera duże ilości zaszyfrowanych paczek."
+        osint_hint: "RAPORT OSINT: Analiza IP wskazuje na znane serwery Command & Control (C2) grupy APT. To nie jest zwykły wirus, lecz zaawansowany atak ukierunkowany. Ignorowanie logów doprowadzi do rozprzestrzenienia."
+        pass_condition:
+          min_stock_price: 50.0
+        bonus_on_pass:
+          finanse: 5
+        questions:
+          "DyrektorIT":
+            label: "DYREKTOR IT (CISO)"
+            options:
+              "Całkowite odcięcie działu kadr od sieci korporacyjnej":
+                siec_ot: 10
+                finanse: -15
+                prawo: 5
+                zaufanie: 0
+              "Tylko nasłuch sieciowy i próba złapania sprawcy na gorącym uczynku":
+                siec_ot: -20
+                finanse: 5
+                prawo: -10
+                zaufanie: 0
+              "Formatowanie zainfekowanych stacji roboczych bez analizy forensic":
+                siec_ot: -5
+                finanse: -10
+                prawo: -15
+                zaufanie: 0
+          "Zarzad":
+            label: "PREZES ZARZĄDU"
+            options:
+              "Powiadomienie ABW o możliwym ataku na infrastrukturę krytyczną":
+                siec_ot: 5
+                finanse: -5
+                prawo: 20
+                zaufanie: 10
+              "Wewnętrzne śledztwo w celu uniknięcia paniki":
+                siec_ot: 0
+                finanse: 10
+                prawo: -15
+                zaufanie: -10
+              "Zlecenie zewnętrznego audytu w trybie pilnym (duży koszt)":
+                siec_ot: 10
+                finanse: -25
+                prawo: 10
+                zaufanie: 15
+
+      2:
+        title: "S1.R2: Eskalacja uprawnień"
+        desc: "Atakujący zdobyli poświadczenia administratora domeny. Systemy autoryzacji zaczynają odrzucać logowania legalnych pracowników."
+        osint_hint: "RAPORT OSINT: Przechwycone logi z darknetu sugerują, że atakujący używają narzędzia Mimikatz. Zmiana wszystkich haseł i wymuszenie MFA zablokuje im dalszą drogę, choć sparaliżuje pracę urzędu."
+        pass_condition:
+          min_stock_price: 48.0
+        bonus_on_pass:
+          siec_ot: 8
+        questions:
+          "DyrektorIT":
+            label: "DYREKTOR IT (CISO)"
+            options:
+              "Globalny reset wszystkich haseł i wymuszenie kluczy sprzętowych":
+                siec_ot: 20
+                finanse: -20
+                prawo: 5
+                zaufanie: -5
+              "Zablokowanie jedynie konta administratora głównego":
+                siec_ot: -15
+                finanse: 0
+                prawo: -5
+                zaufanie: 5
+              "Odcięcie serwera Active Directory od Internetu":
+                siec_ot: 10
+                finanse: -15
+                prawo: 0
+                zaufanie: -10
+          "Zarzad":
+            label: "KOMUNIKACJA KORPORACYJNA"
+            options:
+              "Informacja do pracowników o 'awarii systemu logowania'":
+                siec_ot: 0
+                finanse: 0
+                prawo: -10
+                zaufanie: -15
+              "Szczery komunikat o ataku z instrukcją zachowania bezpieczeństwa":
+                siec_ot: 5
+                finanse: 0
+                prawo: 10
+                zaufanie: 20
+              "Cisza informacyjna i zakaz używania poczty prywatnej":
+                siec_ot: 0
+                finanse: -5
+                prawo: 0
+                zaufanie: -20
+
+      3:
+        title: "S1.R3: Ransomware w sieci biurowej"
+        desc: "Złośliwe oprogramowanie zaszyfrowało serwery księgowe. Pojawia się żądanie okupu w wysokości 2 milionów złotych."
+        osint_hint: "RAPORT OSINT: Płacenie okupu grupom powiązanym z obcymi służbami narusza sankcje międzynarodowe. Odbudowa z backupów będzie kosztowna, ale w 100% legalna."
+        pass_condition:
+          min_stock_price: 46.0
+        bonus_on_pass:
+          prawo: 10
+        questions:
+          "DyrektorIT":
+            label: "DYREKTOR IT (CISO)"
+            options:
+              "Uruchomienie procedury Disaster Recovery (przywracanie z taśm)":
+                siec_ot: 15
+                finanse: -30
+                prawo: 10
+                zaufanie: 10
+              "Próba znalezienia darmowego de-kryptora w sieci":
+                siec_ot: -20
+                finanse: 5
+                prawo: -5
+                zaufanie: -10
+              "Agresywny kontratak i próba zniszczenia serwerów C2 (nielegalne)":
+                siec_ot: -10
+                finanse: -10
+                prawo: -30
+                zaufanie: 5
+          "Zarzad":
+            label: "PREZES ZARZĄDU"
+            options:
+              "Nawiązanie tajnych negocjacji z hakerami w celu zbicia ceny":
+                siec_ot: -5
+                finanse: -40
+                prawo: -40
+                zaufanie: -25
+              "Twarda odmowa i publiczne zgłoszenie sprawy organom ścigania":
+                siec_ot: 0
+                finanse: 0
+                prawo: 25
+                zaufanie: 20
+              "Wykupienie drogiej polisy ubezpieczeniowej (Cyber Insurance) wstecznie":
+                siec_ot: 0
+                finanse: -35
+                prawo: -20
+                zaufanie: 0
+
+      4:
+        title: "S1.R4: Most pomiędzy IT a OT"
+        desc: "Hakerzy próbują przełamać zaporę sieciową oddzielającą sieć biurową (IT) od sieci produkcyjnej (OT - sterowanie prądem)."
+        osint_hint: "RAPORT OSINT: Systemy SCADA są niezwykle przestarzałe. Jeśli hakerzy przedrą się przez zaporę, zyskają fizyczną kontrolę nad transformatorami. Fizyczne odpięcie kabli (Air-Gap) to jedyna 100% gwarancja."
+        pass_condition:
+          min_stock_price: 52.0
+        bonus_on_pass:
+          siec_ot: 10
+        questions:
+          "DyrektorIT":
+            label: "DYREKTOR IT (CISO)"
+            options:
+              "Fizyczne odłączenie (Air-Gap) sieci OT od IT (paraliż monitoringu)":
+                siec_ot: 30
+                finanse: -20
+                prawo: 10
+                zaufanie: -10
+              "Skonfigurowanie nowej wirtualnej śluzy na zaporze firewall":
+                siec_ot: 5
+                finanse: -10
+                prawo: 0
+                zaufanie: 5
+              "Przeczekanie ataku, ufając obecnym zabezpieczeniom":
+                siec_ot: -35
+                finanse: 5
+                prawo: -15
+                zaufanie: -15
+          "Zarzad":
+            label: "DYREKTOR BEZPIECZEŃSTWA (CSO)"
+            options:
+              "Rozesłanie inżynierów do podstacji w celu przejęcia ręcznego sterowania":
+                siec_ot: 20
+                finanse: -25
+                prawo: 5
+                zaufanie: 10
+              "Utrzymanie zdalnego sterowania dla wygody dyspozytorów":
+                siec_ot: -25
+                finanse: 10
+                prawo: 0
+                zaufanie: -5
+              "Wezwanie wojska (WOT) do fizycznej ochrony stacji transformatorowych":
+                siec_ot: 10
+                finanse: -10
+                prawo: 15
+                zaufanie: 25
+
+      5:
+        title: "S1.R5: Wyciek do prasy"
+        desc: "Media dotarły do informacji o ataku. Dziennikarze śledczy publikują artykuł sugerujący, że sieć energetyczna jest w rękach hakerów."
+        osint_hint: "RAPORT OSINT: Badania nastrojów wskazują, że obywatele są gotowi zaakceptować awarię, jeśli zobaczą, że zarząd panuje nad sytuacją i współpracuje ze służbami."
+        pass_condition:
+          min_stock_price: 55.0
+        bonus_on_pass:
+          zaufanie: 15
+        questions:
+          "DyrektorIT":
+            label: "WSPÓŁPRACA Z MEDIAMI (TECHNICZNA)"
+            options:
+              "Publikacja szczegółowego raportu technicznego (Indicators of Compromise)":
+                siec_ot: 5
+                finanse: 0
+                prawo: 10
+                zaufanie: 25
+              "Zatajenie szczegółów z powołaniem się na 'tajemnicę przedsiębiorstwa'":
+                siec_ot: 0
+                finanse: 5
+                prawo: -10
+                zaufanie: -20
+              "Kupienie artykułów sponsorowanych tłumaczących, że system jest superbezpieczny":
+                siec_ot: 0
+                finanse: -20
+                prawo: -5
+                zaufanie: -10
+          "Zarzad":
+            label: "PREZES ZARZĄDU"
+            options:
+              "Zwołanie oficjalnej konferencji z udziałem Ministra Cyfryzacji":
+                siec_ot: 0
+                finanse: -5
+                prawo: 15
+                zaufanie: 30
+              "Wydanie suchego oświadczenia na Twitterze i unikanie kamer":
+                siec_ot: 0
+                finanse: 0
+                prawo: -5
+                zaufanie: -25
+              "Grożenie dziennikarzom pozwami sądowymi za sianie paniki":
+                siec_ot: 0
+                finanse: -15
+                prawo: -20
+                zaufanie: -35
+
+  - id: "s2_atak_ot"
+    name: "AKT II: Przejęcie sterowania"
+    rounds:
+      1:
+        title: "S2.R1: Przenikanie do SCADA"
+        desc: "Mimo zabezpieczeń, na jednym z serwerów SCADA wykryto nieznane oprogramowanie modyfikujące pakiety sterujące napięciem."
+        osint_hint: "RAPORT OSINT: Złośliwy kod przypomina słynnego Stuxneta. Nie niszczy sieci natychmiast, lecz powoli ją destabilizuje, wysyłając fałszywe dane do operatorów (oszukuje monitory)."
+        pass_condition:
+          min_stock_price: 52.0
+        bonus_on_pass:
+          siec_ot: 12
+        questions:
+          "DyrektorIT":
+            label: "GŁÓWNY INŻYNIER SYSTEMÓW"
+            options:
+              "Wstrzymanie automatyki i przejście na pełne sterowanie ręczne":
+                siec_ot: 25
+                finanse: -20
+                prawo: 0
+                zaufanie: 5
+              "Próba wyizolowania złośliwego kodu 'w locie' (ryzyko awarii)":
+                siec_ot: -20
+                finanse: 5
+                prawo: 0
+                zaufanie: -5
+              "Restart całej sieci SCADA (chwilowy blackout prewencyjny)":
+                siec_ot: 10
+                finanse: -30
+                prawo: 10
+                zaufanie: -15
+          "Zarzad":
+            label: "ZARZĄDZANIE KRYZYSOWE"
+            options:
+              "Uruchomienie zapasowego, analogowego centrum dyspozytorskiego":
+                siec_ot: 20
+                finanse: -35
+                prawo: 10
+                zaufanie: 15
+              "Utrzymanie pracy w głównym centrum mimo fałszywych odczytów":
+                siec_ot: -30
+                finanse: 10
+                prawo: -15
+                zaufanie: -10
+              "Wysyłanie dronów i helikopterów do wizualnej oceny stacji":
+                siec_ot: 10
+                finanse: -20
+                prawo: 5
+                zaufanie: 5
+
+      2:
+        title: "S2.R2: Pierwsze wyłączenia (Brownout)"
+        desc: "W kilku dużych miastach dochodzi do spadków napięcia. Migają światła, wyłączają się fabryki. Społeczeństwo zaczyna się bać."
+        osint_hint: "RAPORT OSINT: Giełda energii reaguje panicznie. Konieczne jest wstrzymanie dostaw dla największych fabryk przemysłowych (tzw. stopnie zasilania), aby uratować prąd dla szpitali i obywateli."
+        pass_condition:
+          min_stock_price: 50.0
+        bonus_on_pass:
+          zaufanie: 10
+        questions:
+          "DyrektorIT":
+            label: "OPERATOR SYSTEMU PRZESYŁOWEGO"
+            options:
+              "Wprowadzenie 20. stopnia zasilania (odcięcie przemysłu ciężkiego)":
+                siec_ot: 30
+                finanse: -40
+                prawo: 15
+                zaufanie: 10
+              "Próba utrzymania zasilania dla wszystkich (ryzyko kaskadowej awarii)":
+                siec_ot: -40
+                finanse: 15
+                prawo: -10
+                zaufanie: -20
+              "Odcięcie dzielnic sypialnych na rzecz utrzymania fabryk":
+                siec_ot: 10
+                finanse: 20
+                prawo: -15
+                zaufanie: -45
+          "Zarzad":
+            label: "RELACJE INWESTORSKIE"
+            options:
+              "Zawieszenie notowań giełdowych spółki w celu zatrzymania paniki":
+                siec_ot: 0
+                finanse: -15
+                prawo: 10
+                zaufanie: 5
+              "Wydanie fałszywych prognoz finansowych zapewniających stabilność":
+                siec_ot: 0
+                finanse: 20
+                prawo: -40
+                zaufanie: -30
+              "Prośba o potężną rządową pożyczkę stabilizacyjną":
+                siec_ot: 0
+                finanse: 30
+                prawo: 5
+                zaufanie: -10
+
+      3:
+        title: "S2.R3: Fizyczne zniszczenia"
+        desc: "Złośliwy kod omija zabezpieczenia termiczne. Dwa główne transformatory w regionie eksplodują z powodu przegrzania."
+        osint_hint: "RAPORT OSINT: Czas dostawy nowego sprzętu to miesiące. Musisz skierować moc z rezerw i zaangażować zewnętrzne służby inżynieryjne z innych krajów UE, aby szybko odbudować węzły."
+        pass_condition:
+          min_stock_price: 45.0
+        bonus_on_pass:
+          siec_ot: 15
+        questions:
+          "DyrektorIT":
+            label: "DECYZJA OPERACYJNA"
+            options:
+              "Zakup i lotniczy transport transformatorów zastępczych z zagranicy":
+                siec_ot: 25
+                finanse: -50
+                prawo: 5
+                zaufanie: 15
+              "Kanibalizacja części z mniej ważnych, lokalnych rozdzielni":
+                siec_ot: 10
+                finanse: -5
+                prawo: -10
+                zaufanie: -15
+              "Czekanie na standardową procedurę przetargową (tygodnie bez prądu)":
+                siec_ot: -35
+                finanse: 20
+                prawo: 15
+                zaufanie: -40
+          "Zarzad":
+            label: "ZARZĄDZANIE KRYZYSOWE"
+            options:
+              "Uruchomienie starych, nieekologicznych elektrowni węglowych jako rezerwy":
+                siec_ot: 30
+                finanse: -15
+                prawo: -20
+                zaufanie: 5
+              "Odmowa łamania limitów emisji CO2 (braki w zasilaniu)":
+                siec_ot: -20
+                finanse: 0
+                prawo: 20
+                zaufanie: -15
+              "Masowy zakup prądu na giełdzie europejskiej po drakońskich cenach":
+                siec_ot: 20
+                finanse: -45
+                prawo: 10
+                zaufanie: 10
+
+      4:
+        title: "S2.R4: Sabotaż wewnątrz firmy"
+        desc: "Śledztwo wykazuje, że ktoś fizycznie wpiął pendrive'a w chronionej strefie. Wskazuje to na udział zaufanego pracownika (Insider Threat)."
+        osint_hint: "RAPORT OSINT: Pracownicy są przemęczeni i przestraszeni. Agresywne polowanie na czarownice zniszczy morale zespołu, który aktualnie walczy o utrzymanie sieci."
+        pass_condition:
+          min_stock_price: 50.0
+        bonus_on_pass:
+          prawo: 10
+        questions:
+          "DyrektorIT":
+            label: "DZIAŁ BEZPIECZEŃSTWA"
+            options:
+              "Tymczasowe zablokowanie wszystkich portów USB i rewizje na bramkach":
+                siec_ot: 15
+                finanse: -5
+                prawo: 10
+                zaufanie: -15
+              "Przekazanie monitoringu ABW i dyskretna obserwacja podejrzanych":
+                siec_ot: 5
+                finanse: 0
+                prawo: 15
+                zaufanie: 10
+              "Wysłanie wszystkich pracowników na badanie wariografem (nielegalne)":
+                siec_ot: -5
+                finanse: -15
+                prawo: -35
+                zaufanie: -25
+          "Zarzad":
+            label: "ZARZĄDZANIE ZESPOŁEM (HR)"
+            options:
+              "Ogłoszenie wysokiej nagrody finansowej za wskazanie zdrajcy":
+                siec_ot: 0
+                finanse: -15
+                prawo: -5
+                zaufanie: -15
+              "Zorganizowanie wsparcia psychologicznego dla wyczerpanych inżynierów":
+                siec_ot: 10
+                finanse: -10
+                prawo: 5
+                zaufanie: 20
+              "Zwolnienia grupowe w podejrzanym dziale jako środek zapobiegawczy":
+                siec_ot: -20
+                finanse: 10
+                prawo: -25
+                zaufanie: -30
+
+      5:
+        title: "S2.R5: Krytyczna dekompresja"
+        desc: "Wirus próbuje usunąć wszystkie protokoły bezpieczeństwa i przepalić całą sieć. Mamy 5 minut na reakcję."
+        osint_hint: "RAPORT OSINT: Hakerzy używają techniki 'Dead Man's Switch'. Jeśli usuniecie wirusa, system imploduje. Należy powoli izolować segmenty, zamykając je w kwarantannie."
+        pass_condition:
+          min_stock_price: 55.0
+        bonus_on_pass:
+          siec_ot: 20
+        questions:
+          "DyrektorIT":
+            label: "OSTATNIA LINIA OBRONY (CISO)"
+            options:
+              "Powolne wprowadzanie segmentów w kwarantannę (częściowy blackout)":
+                siec_ot: 25
+                finanse: -20
+                prawo: 10
+                zaufanie: 5
+              "Zabicie całego procesu złośliwego oprogramowania drastycznym skryptem":
+                siec_ot: -45
+                finanse: -10
+                prawo: -5
+                zaufanie: -10
+              "Oddanie kontroli zautomatyzowanym systemom AI dostawcy antywirusa":
+                siec_ot: 10
+                finanse: -30
+                prawo: 0
+                zaufanie: 10
+          "Zarzad":
+            label: "DYREKTOR FINANSOWY"
+            options:
+              "Autoryzacja otwartego budżetu (czek in blanco) na ratowanie sieci":
+                siec_ot: 25
+                finanse: -50
+                prawo: 10
+                zaufanie: 15
+              "Pilnowanie procedur zakupowych z obawy przed audytem kosztów":
+                siec_ot: -30
+                finanse: 20
+                prawo: 15
+                zaufanie: -10
+              "Próba przerzucenia odpowiedzialności finansowej na podwykonawców":
+                siec_ot: -10
+                finanse: 15
+                prawo: -20
+                zaufanie: -25
+
+  - id: "s3_panika"
+    name: "AKT III: Blackout i Panika"
+    rounds:
+      1:
+        title: "S3.R1: Szpitale na agregatach"
+        desc: "Część kraju jest pozbawiona prądu od kilkunastu godzin. Szpitale donoszą, że paliwo w agregatach prądotwórczych starczy im jeszcze na 6 godzin."
+        osint_hint: "RAPORT OSINT: Logistyka paliwowa jest w stanie krytycznym ze względu na niedziałające dystrybutory na stacjach. Zespół musi współpracować z wojskiem w celu zapewnienia transportu paliw, a nie tylko 'naprawiać kable'."
+        pass_condition:
+          min_stock_price: 45.0
+        bonus_on_pass:
+          zaufanie: 15
+        questions:
+          "DyrektorIT":
+            label: "DECYZJA LOGISTYCZNA"
+            options:
+              "Skierowanie własnych ekip serwisowych do dowozu paliwa do szpitali":
+                siec_ot: -10
+                finanse: -20
+                prawo: 15
+                zaufanie: 30
+              "Wniosek do Premiera o wykorzystanie wojsk lądowych do transportu":
+                siec_ot: 10
+                finanse: 0
+                prawo: 20
+                zaufanie: 25
+              "To nie nasz problem, skupiamy się w 100% na serwerowniach":
+                siec_ot: 15
+                finanse: 5
+                prawo: -10
+                zaufanie: -45
+          "Zarzad":
+            label: "PRIORYTETY ZASILANIA"
+            options:
+              "Wymuszenie zasilania szpitali kosztem sieci komórkowych":
+                siec_ot: -5
+                finanse: -10
+                prawo: 15
+                zaufanie: 25
+              "Utrzymanie sieci GSM dla komunikacji ratunkowej kosztem części osiedli":
+                siec_ot: 10
+                finanse: 0
+                prawo: 5
+                zaufanie: -5
+              "Brak decyzji – pozostawienie domyślnych, przestarzałych ustawień systemu":
+                siec_ot: -20
+                finanse: 0
+                prawo: -15
+                zaufanie: -20
+
+      2:
+        title: "S3.R2: Atak Dezinformacyjny (Fake News)"
+        desc: "W sieciach społecznościowych pojawiają się sfałszowane wiadomości rzekomo od Rządu, nakazujące opuszczenie miast z powodu 'zagrożenia radiacyjnego'."
+        osint_hint: "RAPORT OSINT: Kampania jest prowadzona przez zorganizowane farmy trolli zza wschodniej granicy. Musicie wykorzystać tradycyjne media (radio na baterie), aby dotrzeć do odciętych od Internetu obywateli."
+        pass_condition:
+          min_stock_price: 50.0
+        bonus_on_pass:
+          zaufanie: 20
+        questions:
+          "DyrektorIT":
+            label: "CYBER-WYWIAD"
+            options:
+              "Agresywne zgłaszanie kont do blokady przez platformy (Meta, X)":
+                siec_ot: 0
+                finanse: -5
+                prawo: 10
+                zaufanie: 5
+              "Uruchomienie publicznego dashboardu z prawdziwymi danymi z sieci OT":
+                siec_ot: -5
+                finanse: -15
+                prawo: 15
+                zaufanie: 25
+              "Odcięcie całego ruchu zagranicznego z routerów brzegowych firmy":
+                siec_ot: 15
+                finanse: -10
+                prawo: 0
+                zaufanie: -5
+          "Zarzad":
+            label: "KOMUNIKACJA KRYZYSOWA"
+            options:
+              "Wystąpienia w radiu z wykorzystaniem ogólnopolskich stacji transmisyjnych":
+                siec_ot: 0
+                finanse: -10
+                prawo: 10
+                zaufanie: 35
+              "Wysyłanie alertów SMS przez Rządowe Centrum Bezpieczeństwa (RCB)":
+                siec_ot: 0
+                finanse: 0
+                prawo: 15
+                zaufanie: 20
+              "Zignorowanie plotek jako 'niezwiązanych z naszą spółką'":
+                siec_ot: 0
+                finanse: 0
+                prawo: -10
+                zaufanie: -35
+
+      3:
+        title: "S3.R3: Ultimatum Rządu"
+        desc: "Ministerstwo Aktywów Państwowych stawia ultimatum: przywróćcie prąd w Stolicy w ciągu 2 godzin, albo wejdzie zarząd komisaryczny."
+        osint_hint: "RAPORT OSINT: Sieć jest niestabilna. Siłowe podniesienie napięcia w Stolicy wywoła potężne przeciążenie i uszkodzi infrastrukturę w całym kraju na kolejne tygodnie. Musisz przeciwstawić się politykom."
+        pass_condition:
+          min_stock_price: 48.0
+        bonus_on_pass:
+          siec_ot: 15
+        questions:
+          "DyrektorIT":
+            label: "DYREKTOR IT / OPERACJE"
+            options:
+              "Odmowa wykonania polecenia ze względów bezpieczeństwa fizycznego":
+                siec_ot: 25
+                finanse: 0
+                prawo: -15
+                zaufanie: 10
+              "Ślepe wykonanie rozkazu politycznego i puszczenie pełnej mocy":
+                siec_ot: -50
+                finanse: 10
+                prawo: 20
+                zaufanie: -20
+              "Ominięcie Stolicy i zasilenie tylko kluczowych ministerstw z rezerw":
+                siec_ot: 10
+                finanse: -15
+                prawo: 5
+                zaufanie: -10
+          "Zarzad":
+            label: "PREZES ZARZĄDU"
+            options:
+              "Złożenie dymisji w ramach protestu przeciwko politycznym naciskom":
+                siec_ot: 0
+                finanse: 0
+                prawo: 5
+                zaufanie: 20
+              "Twarde negocjacje poparte raportami technicznymi i audytami":
+                siec_ot: 15
+                finanse: -10
+                prawo: 25
+                zaufanie: 15
+              "Wynajęcie firmy PR do zrzucenia winy na poprzedni zarząd":
+                siec_ot: 0
+                finanse: -20
+                prawo: -10
+                zaufanie: -25
+
+      4:
+        title: "S3.R4: Próba kradzieży sprzętu"
+        desc: "Zdesperowane grupy obywateli próbują włamać się na tereny stacji przekaźnikowych, aby ukraść miedź i agregaty."
+        osint_hint: "RAPORT OSINT: Użycie siły wobec obywateli zakończy się katastrofą wizerunkową. Wojsko i Policja są w stanie ochronić obiekty bez stosowania broni, jeśli powołacie się na Ustawę o Ochronie Infrastruktury Krytycznej."
+        pass_condition:
+          min_stock_price: 45.0
+        bonus_on_pass:
+          prawo: 10
+        questions:
+          "DyrektorIT":
+            label: "DZIAŁ BEZPIECZEŃSTWA (CSO)"
+            options:
+              "Zgłoszenie obiektów jako strefy zmilitaryzowane (wsparcie Policji/Wojska)":
+                siec_ot: 20
+                finanse: -15
+                prawo: 25
+                zaufanie: 5
+              "Wynajęcie prywatnych, agresywnych najemników do obrony stacji":
+                siec_ot: 15
+                finanse: -30
+                prawo: -30
+                zaufanie: -35
+              "Pozostawienie obiektów bez ochrony (niech kradną, byle nie zrobili nam krzywdy)":
+                siec_ot: -35
+                finanse: -20
+                prawo: -15
+                zaufanie: -10
+          "Zarzad":
+            label: "KOMUNIKACJA KORPORACYJNA"
+            options:
+              "Wydanie błagalnego apelu o niesabotowanie własnego ratunku":
+                siec_ot: 0
+                finanse: 0
+                prawo: 0
+                zaufanie: 15
+              "Rozsiewanie plotek, że transformatory są pod napięciem (śmiertelnie niebezpieczne)":
+                siec_ot: 10
+                finanse: 0
+                prawo: -10
+                zaufanie: -15
+              "Ignorowanie incydentów w komunikatach prasowych":
+                siec_ot: 0
+                finanse: 0
+                prawo: 0
+                zaufanie: -5
+
+      5:
+        title: "S3.R5: Zimny start (Black Start)"
+        desc: "Atak został powstrzymany. Aby podnieść sieć z całkowitego zera, należy zsynchronizować generatory. To ryzykowna operacja."
+        osint_hint: "RAPORT OSINT: Pośpiech zabija. Synchronizacja sieci energetycznej przypomina orkiestrę. Wdrożenie procedury etapami (tzw. wyspy energetyczne) to najbezpieczniejsza i polecana przez ENTSO-E ścieżka."
+        pass_condition:
+          min_stock_price: 55.0
+        bonus_on_pass:
+          siec_ot: 30
+        questions:
+          "DyrektorIT":
+            label: "GŁÓWNY INŻYNIER"
+            options:
+              "Budowa małych, bezpiecznych 'wysp energetycznych' i powolne ich łączenie":
+                siec_ot: 40
+                finanse: -15
+                prawo: 15
+                zaufanie: 10
+              "Agresywne, masowe podanie napięcia z głównej elektrowni (ogromne ryzyko)":
+                siec_ot: -40
+                finanse: 10
+                prawo: -10
+                zaufanie: -10
+              "Oczekiwanie na wsparcie energetyczne z krajów sąsiednich przez interkonektory":
+                siec_ot: 15
+                finanse: -40
+                prawo: 10
+                zaufanie: -5
+          "Zarzad":
+            label: "PREZES ZARZĄDU"
+            options:
+              "Osobiste doglądanie procedur w centrum operacyjnym (buduje morale)":
+                siec_ot: 10
+                finanse: 0
+                prawo: 5
+                zaufanie: 15
+              "Wcześniejsze ogłoszenie sukcesu w mediach (zanim prąd fizycznie wróci)":
+                siec_ot: 0
+                finanse: 0
+                prawo: -5
+                zaufanie: -30
+              "Organizowanie bankietu celebrującego dla zarządu i polityków":
+                siec_ot: 0
+                finanse: -10
+                prawo: -15
+                zaufanie: -50
+
+  - id: "s4_audyt"
+    name: "AKT IV: Audyt, Odbudowa i Rozliczenie"
+    rounds:
+      1:
+        title: "S4.R1: Wejście śledczych"
+        desc: "Zaraz po ustabilizowaniu sieci, do firmy wkraczają agenci ABW i prokuratorzy zabezpieczając dyski."
+        osint_hint: "RAPORT OSINT: Pełna kooperacja złagodzi kary narzucane przez KNF oraz Dyrektywę NIS2. Próba ukrycia dowodów zaniedbań z przeszłości (tzw. CYA - Cover Your Ass) skończy się więzieniem."
+        pass_condition:
+          min_stock_price: 50.0
+        bonus_on_pass:
+          prawo: 15
+        questions:
+          "DyrektorIT":
+            label: "DZIAŁ COMPLIANCE"
+            options:
+              "Pełne udostępnienie całej infrastruktury i nielimitowany dostęp dla śledczych":
+                siec_ot: 0
+                finanse: -10
+                prawo: 35
+                zaufanie: 15
+              "Wydanie tylko tych logów, o które konkretnie proszą z nakazu":
+                siec_ot: 0
+                finanse: 5
+                prawo: -15
+                zaufanie: -10
+              "Masowe, przypadkowe niszczenie dysków w ramach 'rutynowej utylizacji'":
+                siec_ot: 0
+                finanse: -5
+                prawo: -50
+                zaufanie: -40
+          "Zarzad":
+            label: "RELACJE INWESTORSKIE"
+            options:
+              "Uczciwe ogłoszenie potężnych strat kwartalnych spowodowanych atakiem":
+                siec_ot: 0
+                finanse: -20
+                prawo: 20
+                zaufanie: 25
+              "Manipulowanie wskaźnikami, aby ukryć realne koszty odbudowy":
+                siec_ot: 0
+                finanse: 15
+                prawo: -40
+                zaufanie: -30
+              "Obwinianie zewnętrznego dostawcy firewalli za cały incydent":
+                siec_ot: 0
+                finanse: 10
+                prawo: -10
+                zaufanie: -15
+
+      2:
+        title: "S4.R2: Kara od Regulatora"
+        desc: "Urząd Regulacji Energetyki oraz UODO nakładają na firmę rekordowe kary za naruszenie ciągłości i wyciek danych (łącznie 250 mln zł)."
+        osint_hint: "RAPORT OSINT: Odwołanie się do sądu z wykazaniem działania 'siły wyższej' (atak obcego państwa) daje szansę na redukcję kary o 80%. Potrzebujecie topowej kancelarii prawnej."
+        pass_condition:
+          min_stock_price: 48.0
+        bonus_on_pass:
+          finanse: 20
+        questions:
+          "DyrektorIT":
+            label: "GŁÓWNY KSIĘGOWY (CFO)"
+            options:
+              "Pokorne zapłacenie kary i zwolnienie połowy załogi w celu cięcia kosztów":
+                siec_ot: -20
+                finanse: -50
+                prawo: 15
+                zaufanie: -10
+              "Wynajęcie międzynarodowej kancelarii prawnej i pójście do sądu":
+                siec_ot: 0
+                finanse: -25
+                prawo: 25
+                zaufanie: 15
+              "Próba załatwienia 'umorzenia' poprzez polityczne znajomości (korupcja)":
+                siec_ot: 0
+                finanse: 10
+                prawo: -50
+                zaufanie: -40
+          "Zarzad":
+            label: "PREZES ZARZĄDU"
+            options:
+              "Uruchomienie specjalnego funduszu rekompensat dla poszkodowanych obywateli":
+                siec_ot: 0
+                finanse: -35
+                prawo: 15
+                zaufanie: 40
+              "Przerzucenie kosztów kar na odbiorców przez podniesienie taryf za prąd":
+                siec_ot: 0
+                finanse: 40
+                prawo: -10
+                zaufanie: -50
+              "Ogłoszenie niewypłacalności i prośba o nacjonalizację":
+                siec_ot: 0
+                finanse: 0
+                prawo: -20
+                zaufanie: -30
+
+      3:
+        title: "S4.R3: Transformacja architektury"
+        desc: "Audyt techniczny miażdży dotychczasową strukturę IT/OT. Należy od nowa zaprojektować bezpieczeństwo firmy."
+        osint_hint: "RAPORT OSINT: Architektura 'Zero Trust' i fizyczne separatory (diodowe) między IT a OT to obecnie standard branżowy. Będzie to bardzo drogie, ale inwestorzy docenią radykalną zmianę."
+        pass_condition:
+          min_stock_price: 55.0
+        bonus_on_pass:
+          siec_ot: 20
+        questions:
+          "DyrektorIT":
+            label: "DYREKTOR IT (CISO)"
+            options:
+              "Wdrożenie modelu Zero Trust oraz jednokierunkowych diod danych (data diodes)":
+                siec_ot: 45
+                finanse: -40
+                prawo: 20
+                zaufanie: 15
+              "Zakupienie najdroższego pakietu antywirusowego na rynku i zostawienie starej sieci":
+                siec_ot: -15
+                finanse: -20
+                prawo: -10
+                zaufanie: -5
+              "Napisanie wewnętrznych, autorskich zabezpieczeń przez dział IT (tanie, ryzykowne)":
+                siec_ot: -30
+                finanse: 15
+                prawo: -20
+                zaufanie: -15
+          "Zarzad":
+            label: "HR I KOMPETENCJE"
+            options:
+              "Powołanie nowoczesnego Security Operations Center (SOC) 24/7":
+                siec_ot: 20
+                finanse: -25
+                prawo: 15
+                zaufanie: 10
+              "Zlecenie całego bezpieczeństwa zewnętrznej firemce za najniższą stawkę":
+                siec_ot: -25
+                finanse: 15
+                prawo: -15
+                zaufanie: -20
+              "Szkolenia e-learningowe dla starych pracowników zamiast rekrutacji":
+                siec_ot: 5
+                finanse: -5
+                prawo: 5
+                zaufanie: 0
+
+      4:
+        title: "S4.R4: Nowy ład i przesłuchania"
+        desc: "Dyrektorzy są wzywani przed sejmową komisję śledczą. Transmisja idzie na żywo w ogólnopolskiej telewizji."
+        osint_hint: "RAPORT OSINT: Politycy próbują zbić kapitał wyborczy. Nie dajcie się sprowokować. Skupcie się na twardych liczbach, logach i planie naprawczym. Emocje to Wasz wróg."
+        pass_condition:
+          min_stock_price: 60.0
+        bonus_on_pass:
+          zaufanie: 25
+        questions:
+          "DyrektorIT":
+            label: "DYREKTOR TECHNICZNY"
+            options:
+              "Merytoryczne i spokojne wyjaśnienie anatomii ataku z użyciem makiet dla laików":
+                siec_ot: 0
+                finanse: 0
+                prawo: 15
+                zaufanie: 30
+              "Używanie potężnego żargonu technicznego (technobełkotu), aby uśpić komisję":
+                siec_ot: 0
+                finanse: 0
+                prawo: -5
+                zaufanie: -15
+              "Odmowa odpowiedzi na pytania zasłaniając się bezpieczeństwem państwa":
+                siec_ot: 0
+                finanse: 0
+                prawo: -20
+                zaufanie: -25
+          "Zarzad":
+            label: "PREZES ZARZĄDU"
+            options:
+              "Przyjęcie pełnej, honorowej odpowiedzialności bez szukania wymówek":
+                siec_ot: 0
+                finanse: 0
+                prawo: 10
+                zaufanie: 35
+              "Zrzucanie winy na 'bezprecedensowy atak z kosmosu' i cięcia budżetowe":
+                siec_ot: 0
+                finanse: 0
+                prawo: -10
+                zaufanie: -30
+              "Agresywne atakowanie polityków i oskarżanie ich o sabotaż państwowy":
+                siec_ot: 0
+                finanse: 0
+                prawo: -15
+                zaufanie: -45
+
+      5:
+        title: "S4.R5: Finałowa Strategia Resilience"
+        desc: "Mija rok od ataku. Firma ustabilizowała pozycję. Należy zatwierdzić strategię cyberodporności (Cyber Resilience) na najbliższą dekadę."
+        osint_hint: "RAPORT OSINT: To ostateczny test dojrzałości. Przejście od podejścia reaktywnego ('gaszenie pożarów') do proaktywnego (ciągłe testy penetracyjne, Red Teaming) zagwarantuje wam najwyższe notowania giełdowe."
+        pass_condition:
+          min_stock_price: 65.0
+        bonus_on_pass:
+          finanse: 30
+        questions:
+          "DyrektorIT":
+            label: "DYREKTOR BEZPIECZEŃSTWA (CISO)"
+            options:
+              "Regularne, coroczne ćwiczenia Red Teamingu (symulacja ataków) na żywej sieci":
+                siec_ot: 40
+                finanse: -20
+                prawo: 20
+                zaufanie: 25
+              "Ograniczenie się jedynie do audytów papierowych dla utrzymania certyfikatów ISO":
+                siec_ot: -20
+                finanse: 10
+                prawo: 5
+                zaufanie: -10
+              "Wprowadzenie ekstremalnych blokad, uniemożliwiających normalną pracę pracownikom":
+                siec_ot: 20
+                finanse: -15
+                prawo: -5
+                zaufanie: -20
+          "Zarzad":
+            label: "ZARZĄD"
+            options:
+              "Wprowadzenie bezpieczeństwa jako kluczowego wskaźnika oceny dla każdego menedżera (KPI)":
+                siec_ot: 20
+                finanse: -10
+                prawo: 20
+                zaufanie: 15
+              "Uznanie tematu za 'zamknięty' i powrót do biznesu as usual":
+                siec_ot: -30
+                finanse: 20
+                prawo: -25
+                zaufanie: -35
+              "Znaczne zwiększenie premii zarządu w nagrodę za 'przetrwanie kryzysu'":
+                siec_ot: 0
+                finanse: -20
+                prawo: -10
+                zaufanie: -50
